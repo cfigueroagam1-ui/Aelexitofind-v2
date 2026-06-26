@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificaciones — AlexitoFind</title>
+  <link rel="icon" type="image/jpg" href="assets/img/logo.jpg">
+  
+  <!-- CSS Base & Design System -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  
+  <style>
+    .notif-layout {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: var(--af-s5) var(--af-s4) var(--af-s16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--af-s4);
+    }
+
+    .notif-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--af-s3);
+    }
+
+    .notif-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    /* Tabs navigation */
+    .notif-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--af-gray-200);
+      padding-bottom: var(--af-s3);
+      margin-bottom: var(--af-s3);
+    }
+
+    .notif-tab {
+      padding: 8px 16px;
+      border-radius: var(--af-r-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--af-gray-500);
+      cursor: pointer;
+      transition: all var(--af-fast) var(--af-ease);
+    }
+
+    .notif-tab.active {
+      background: var(--af-primary);
+      color: white;
+    }
+
+    .notif-tab:hover:not(.active) {
+      background: var(--af-gray-100);
+      color: var(--af-dark);
+    }
+
+    /* Notification cards */
+    .notif-card {
+      background: white;
+      border-radius: var(--af-r-xl);
+      padding: var(--af-s4) var(--af-s5);
+      border: 1px solid var(--af-gray-100);
+      box-shadow: var(--af-shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--af-s4);
+      cursor: pointer;
+      position: relative;
+      transition: all var(--af-base) var(--af-ease);
+    }
+
+    .notif-card:hover {
+      box-shadow: var(--af-shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .notif-card.unread {
+      background: rgba(253,38,122,0.02);
+      border-color: rgba(253,38,122,0.15);
+    }
+
+    .notif-card.unread::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--af-primary);
+    }
+
+    .notif-avatar-container {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .notif-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .notif-badge-icon {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: var(--af-shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      border: 1px solid var(--af-gray-100);
+    }
+
+    .notif-content {
+      flex: 1;
+      font-size: 0.875rem;
+      color: var(--af-gray-700);
+      line-height: 1.4;
+      padding-right: var(--af-s6); /* space for unread dot */
+    }
+
+    .notif-content strong {
+      color: var(--af-dark);
+    }
+
+    .notif-time {
+      font-size: 0.75rem;
+      color: var(--af-gray-400);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="af-page">
+    <!-- Topbar for Mobile -->
+    <header class="af-topbar af-mobile-only" role="banner">
+      <div class="af-topbar-inner">
+        <div class="af-topbar-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--af-primary)">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <span class="af-topbar-logo-text">AlexitoFind</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content Area -->
+    <main class="af-page-content" role="main">
+      <div class="notif-layout">
+        
+        <div class="notif-header">
+          <h1>Notificaciones</h1>
+          <button class="af-section-link" onclick="markAllRead()" style="border:none; background:none;">
+            Marcar todo leído
+          </button>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="notif-tabs">
+          <div class="notif-tab active" onclick="filterNotifications('all', this)">Todas</div>
+          <div class="notif-tab" onclick="filterNotifications('like', this)">Likes</div>
+          <div class="notif-tab" onclick="filterNotifications('match', this)">Matches</div>
+        </div>
+
+        <!-- Notifications list -->
+        <div class="activity-list" id="notifications-feed-list">
+          <!-- Loaded dynamically -->
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div id="bottom-nav-container"></div>
+  </div>
+
+  <!-- Component scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+
+  <script>
+    let currentFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check auth
+      if (localStorage.getItem('af_logged_in') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Render components
+      document.getElementById('sidebar-container').innerHTML = buildSidebar('notifications');
+      document.getElementById('bottom-nav-container').innerHTML = buildBottomNav('notifications');
+      Navigation.updateBadges();
+
+      // Show feed with animation loader
+      showNotificationsFeed();
+    });
+
+    function showNotificationsFeed() {
+      const feed = document.getElementById('notifications-feed-list');
+      feed.innerHTML = Skeleton.notifications(4);
+
+      setTimeout(() => {
+        renderNotifications();
+      }, 600);
+    }
+
+    function renderNotifications() {
+      const feed = document.getElementById('notifications-feed-list');
+      
+      // Filter list
+      let filtered = NOTIFICATIONS;
+      if (currentFilter === 'like') {
+        filtered = NOTIFICATIONS.filter(n => n.type === 'like' || n.type === 'superlike');
+      } else if (currentFilter === 'match') {
+        filtered = NOTIFICATIONS.filter(n => n.type === 'match');
+      }
+
+      if (filtered.length === 0) {
+        feed.innerHTML = `
+          <div class="af-empty">
+            <div class="af-empty-icon">🔔</div>
+            <h3 class="af-empty-title">Sin notificaciones</h3>
+            <p class="af-empty-subtitle">Te avisaremos cuando ocurra algo interesante por aquí</p>
+          </div>
+        `;
+        return;
+      }
+
+      feed.innerHTML = filtered.map((act, i) => {
+        const u = getUserById(act.userId);
+        const unreadClass = act.read ? '' : ' unread';
+        
+        // Define target click url
+        let targetUrl = '#';
+        if (act.type === 'match' || act.type === 'message') {
+          const chat = getConversationByUserId(u.id);
+          targetUrl = chat ? `messages.html?chat=${chat.id}` : `messages.html`;
+        } else {
+          targetUrl = `explore.html`; // Go back to exploring or show card
+        }
+
+        return `
+          <div class="notif-card${unreadClass}" onclick="handleNotifClick('${act.id}', '${targetUrl}')" 
+            style="animation: slideUp var(--af-base) var(--af-ease-out) ${i * 40}ms both">
+            <div class="notif-avatar-container">
+              <img class="notif-avatar" src="${u.avatar}" alt="${u.name}"
+                onerror="this.src='${generateAvatarSVG(u.name + ' ' + u.lastName, 48)}'">
+              <div class="notif-badge-icon" style="background:${act.iconBg}">
+                ${act.icon}
+              </div>
+            </div>
+            <div class="notif-content">
+              <div>${act.text}</div>
+              <div class="notif-time">${act.time}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterNotifications(filter, element) {
+      document.querySelectorAll('.notif-tab').forEach(tab => tab.classList.remove('active'));
+      element.classList.add('active');
+      currentFilter = filter;
+      renderNotifications();
+    }
+
+    function handleNotifClick(notifId, targetUrl) {
+      // Find notif and mark read
+      const n = NOTIFICATIONS.find(item => item.id === notifId);
+      if (n) {
+        n.read = true;
+      }
+      
+      Navigation.updateBadges();
+      
+      // Navigate to destination
+      if (targetUrl && targetUrl !== '#') {
+        window.location.href = targetUrl;
+      } else {
+        renderNotifications();
+      }
+    }
+
+    function markAllRead() {
+      markAllNotificationsRead();
+      Navigation.updateBadges();
+      renderNotifications();
+      Toast.show('✓ Todas las notificaciones leídas', 'success', 2000);
+    }
+  </script>
+</body>
+</html>

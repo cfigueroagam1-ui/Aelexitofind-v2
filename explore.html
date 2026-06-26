@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorar — AlexitoFind</title>
+  <link rel="icon" type="image/jpg" href="assets/img/logo.jpg">
+  
+  <!-- CSS Base & Design System -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  
+  <style>
+    .explore-layout {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - var(--af-topbar) - var(--af-bottom-nav));
+      justify-content: space-between;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: var(--af-s3) var(--af-s4);
+      position: relative;
+    }
+
+    @media (min-width: 1024px) {
+      .explore-layout {
+        height: 100vh;
+        padding-top: var(--af-s6);
+        padding-bottom: var(--af-s6);
+      }
+    }
+
+    /* Progress bar styling */
+    .explore-progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--af-gray-200);
+      z-index: 10;
+    }
+
+    .explore-progress-fill {
+      height: 100%;
+      background: var(--af-gradient);
+      width: 0%;
+      transition: width var(--af-base) var(--af-ease);
+    }
+
+    /* Empty state styling */
+    .explore-empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--af-s16) var(--af-s6);
+      height: 100%;
+      gap: var(--af-s4);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    .empty-state-title {
+      font-family: var(--af-font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--af-dark);
+    }
+
+    .empty-state-text {
+      font-size: 0.9375rem;
+      color: var(--af-gray-500);
+      max-width: 280px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="af-page">
+    <!-- Topbar for Mobile -->
+    <header class="af-topbar af-mobile-only" role="banner">
+      <div class="af-topbar-inner">
+        <div class="af-topbar-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--af-primary)">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <span class="af-topbar-logo-text">AlexitoFind</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content Area -->
+    <main class="af-page-content" role="main">
+      <div class="explore-progress-bar">
+        <div class="explore-progress-fill" id="af-explore-progress"></div>
+      </div>
+
+      <div class="explore-layout">
+        <!-- Card Stack Area -->
+        <div class="af-card-stack" id="af-card-stack" style="position:relative; flex:1; width:100%; display:flex; align-items:center; justify-content:center;">
+          <!-- Skeleton Loading Screen initially -->
+          <div id="explore-skeleton" style="width:100%; height:100%; position:absolute; inset:0;">
+            <!-- Simple Skeleton Card mockup -->
+            <div class="af-card" style="z-index: 10; display: flex; flex-direction: column; justify-content: flex-end; background:#eee; padding: 24px; pointer-events: none;">
+              <div class="af-skeleton af-skeleton-text" style="width: 60%; height: 32px; margin-bottom: 8px;"></div>
+              <div class="af-skeleton af-skeleton-text sm" style="width: 40%; height: 16px; margin-bottom: 16px;"></div>
+              <div class="af-skeleton af-skeleton-text sm" style="width: 80%; height: 16px; margin-bottom: 8px;"></div>
+              <div class="af-skeleton af-skeleton-text sm" style="width: 70%; height: 16px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No More Cards State -->
+        <div class="explore-empty-state" id="af-no-more-cards">
+          <div class="empty-state-icon">🌍</div>
+          <h3 class="empty-state-title">No hay más perfiles cerca</h3>
+          <p class="empty-state-text">Has visto a todos en tu zona. Intenta expandir tu radio de búsqueda o activar el Modo Global.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;width:100%">
+            <button class="af-btn af-btn-primary" onclick="restartExplore()">
+              <span>Volver a empezar</span>
+            </button>
+            <a href="settings.html" class="af-btn af-btn-secondary">
+              <span>Ajustes de búsqueda</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card Action Buttons -->
+        <div class="af-card-actions" id="explore-actions-bar" style="opacity: 0; pointer-events: none; transition: opacity var(--af-base) var(--af-ease);">
+          <!-- Rewind -->
+          <button class="af-card-action-btn af-card-action-rewind" id="btn-rewind" aria-label="Deshacer último deslizamiento">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+          </button>
+          
+          <!-- Nope / Reject -->
+          <button class="af-card-action-btn af-card-action-nope" id="btn-nope" aria-label="Rechazar perfil">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+
+          <!-- Super Like -->
+          <button class="af-card-action-btn af-card-action-super" id="btn-super" aria-label="Dar Super Like">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </button>
+
+          <!-- Like / Accept -->
+          <button class="af-card-action-btn af-card-action-like" id="btn-like" aria-label="Dar Me Gusta">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+            </svg>
+          </button>
+
+          <!-- Boost -->
+          <button class="af-card-action-btn af-card-action-boost" id="btn-boost" aria-label="Activar Boost">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div id="bottom-nav-container"></div>
+  </div>
+
+  <!-- Component scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/explore.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check auth state
+      if (localStorage.getItem('af_logged_in') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Render navigation components
+      document.getElementById('sidebar-container').innerHTML = buildSidebar('explore');
+      document.getElementById('bottom-nav-container').innerHTML = buildBottomNav('explore');
+
+      // Update badges
+      Navigation.updateBadges();
+
+      // Simulate load delay for skeleton screen
+      setTimeout(() => {
+        const skeleton = document.getElementById('explore-skeleton');
+        if (skeleton) skeleton.remove();
+
+        // Enable actions and show action buttons
+        const actionsBar = document.getElementById('explore-actions-bar');
+        if (actionsBar) {
+          actionsBar.style.opacity = '1';
+          actionsBar.style.pointerEvents = 'auto';
+        }
+
+        // Initialize Explore system
+        ExploreApp.init();
+      }, 900);
+    });
+
+    function restartExplore() {
+      Loader.show('Recargando perfiles...');
+      setTimeout(() => {
+        Loader.hide();
+        localStorage.removeItem('af_explore_completed');
+        window.location.reload();
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

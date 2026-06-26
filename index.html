@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlexitoFind — Descubre Conexiones Genuinas</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/jpg" href="assets/img/logo.jpg">
+  
+  <!-- CSS Base & Design System -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--af-gradient-splash);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .splash-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn var(--af-slow) var(--af-ease-out) both;
+    }
+
+    .splash-logo-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: var(--af-s4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+      animation: splashBounce 1.8s var(--af-spring) infinite alternate;
+    }
+
+    .splash-logo-img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .splash-title {
+      font-family: var(--af-font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin-bottom: var(--af-s2);
+      color: white;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideUp var(--af-base) var(--af-ease-out) 0.3s both;
+    }
+
+    .splash-tagline {
+      font-size: 1rem;
+      font-weight: 500;
+      opacity: 0.9;
+      margin-bottom: var(--af-s10);
+      max-width: 280px;
+      line-height: 1.4;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      animation: slideUp var(--af-base) var(--af-ease-out) 0.5s both;
+    }
+
+    .splash-loader {
+      display: flex;
+      gap: var(--af-s2);
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn var(--af-slow) var(--af-ease-out) 0.7s both;
+    }
+
+    .splash-dot {
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .splash-dot:nth-child(2) { animation-delay: 200ms; }
+    .splash-dot:nth-child(3) { animation-delay: 400ms; }
+
+    @keyframes splashBounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-12px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="splash-container">
+    <div class="splash-logo-wrap">
+      <!-- Heart logo svg path -->
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="url(#splash-heart-grad)">
+        <defs>
+          <linearGradient id="splash-heart-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FD267A" />
+            <stop offset="100%" stop-color="#FF655B" />
+          </linearGradient>
+        </defs>
+        <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+      </svg>
+    </div>
+    <h1 class="splash-title">AlexitoFind</h1>
+    <p class="splash-tagline">Descubre personas increíbles cerca de ti. Conecta, explora y chatea.</p>
+    
+    <div class="splash-loader">
+      <span class="splash-dot"></span>
+      <span class="splash-dot"></span>
+      <span class="splash-dot"></span>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simulate checking session or assets load
+      setTimeout(() => {
+        // Fade out animation
+        document.body.style.transition = 'opacity 0.6s var(--af-ease-out), transform 0.6s var(--af-ease-out)';
+        document.body.style.opacity = '0';
+        document.body.style.transform = 'scale(1.05)';
+        
+        setTimeout(() => {
+          const isLoggedIn = localStorage.getItem('af_logged_in') === 'true';
+          if (isLoggedIn) {
+            window.location.href = 'dashboard.html';
+          } else {
+            window.location.href = 'login.html';
+          }
+        }, 600);
+      }, 2500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración — AlexitoFind</title>
+  <link rel="icon" type="image/jpg" href="assets/img/logo.jpg">
+  
+  <!-- CSS Base & Design System -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  
+  <style>
+    .settings-layout {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: var(--af-s5) var(--af-s4) var(--af-s16);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .settings-header {
+      margin-bottom: var(--af-s5);
+    }
+
+    .settings-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    /* Range output style */
+    .slider-output-val {
+      font-weight: 700;
+      color: var(--af-primary);
+      font-size: 0.9rem;
+    }
+
+    /* Radios grid for discovery */
+    .showme-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--af-s2);
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .showme-option {
+      border: 2px solid var(--af-gray-200);
+      border-radius: var(--af-r-lg);
+      padding: 10px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--af-gray-600);
+      cursor: pointer;
+      transition: all var(--af-base) var(--af-ease);
+    }
+
+    .showme-option.active {
+      border-color: var(--af-primary);
+      color: var(--af-primary);
+      background: rgba(253,38,122,0.04);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="af-page">
+    <!-- Topbar for Mobile -->
+    <header class="af-topbar af-mobile-only" role="banner">
+      <div class="af-topbar-inner">
+        <div class="af-topbar-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--af-primary)">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <span class="af-topbar-logo-text">AlexitoFind</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content Area -->
+    <main class="af-page-content" role="main">
+      <div class="settings-layout">
+        
+        <div class="settings-header">
+          <h1>Configuración</h1>
+        </div>
+
+        <!-- Section Discovery -->
+        <div class="af-settings-section">
+          <div class="af-settings-section-title">Ajustes de Descubrimiento</div>
+          
+          <!-- Max Distance Slider -->
+          <div class="af-settings-item" style="flex-direction:column; align-items:stretch; gap:12px">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+              <span class="af-settings-item-label" style="font-weight:600">Distancia máxima</span>
+              <span class="slider-output-val" id="distance-val">50 km</span>
+            </div>
+            <input class="af-range" type="range" id="setting-distance" min="2" max="160" value="50" oninput="updateDistance(this.value)">
+          </div>
+
+          <!-- Age Min Slider -->
+          <div class="af-settings-item" style="flex-direction:column; align-items:stretch; gap:12px">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+              <span class="af-settings-item-label" style="font-weight:600">Edad mínima</span>
+              <span class="slider-output-val" id="age-min-val">20 años</span>
+            </div>
+            <input class="af-range" type="range" id="setting-age-min" min="18" max="70" value="20" oninput="updateAgeMin(this.value)">
+          </div>
+
+          <!-- Age Max Slider -->
+          <div class="af-settings-item" style="flex-direction:column; align-items:stretch; gap:12px">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+              <span class="af-settings-item-label" style="font-weight:600">Edad máxima</span>
+              <span class="slider-output-val" id="age-max-val">35 años</span>
+            </div>
+            <input class="af-range" type="range" id="setting-age-max" min="18" max="75" value="35" oninput="updateAgeMax(this.value)">
+          </div>
+
+          <!-- Show Me selector -->
+          <div class="af-settings-item" style="flex-direction:column; align-items:stretch; gap:8px">
+            <span class="af-settings-item-label" style="font-weight:600">Mostrarme</span>
+            <div class="showme-selector">
+              <div class="showme-option" id="sm-men" onclick="setShowMe('men')">Hombres</div>
+              <div class="showme-option" id="sm-women" onclick="setShowMe('women')">Mujeres</div>
+              <div class="showme-option" id="sm-everyone" onclick="setShowMe('everyone')">Todos</div>
+            </div>
+          </div>
+
+          <!-- Global Mode Toggle -->
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Modo Global</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-global" data-setting-key="discovery.globalMode">
+              <label class="af-toggle-track" for="tog-global"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <!-- Show on Explore Toggle -->
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Mostrarme en Explorar</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-show-exp" data-setting-key="discovery.showOnExplore">
+              <label class="af-toggle-track" for="tog-show-exp"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Notifications -->
+        <div class="af-settings-section">
+          <div class="af-settings-section-title">Notificaciones de la App</div>
+          
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Nuevos Matches</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-n-matches" data-setting-key="notifications.matches">
+              <label class="af-toggle-track" for="tog-n-matches"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Mensajes de Chat</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-n-messages" data-setting-key="notifications.messages">
+              <label class="af-toggle-track" for="tog-n-messages"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Me Gusta</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-n-likes" data-setting-key="notifications.likes">
+              <label class="af-toggle-track" for="tog-n-likes"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Super Likes</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-n-sups" data-setting-key="notifications.superLikes">
+              <label class="af-toggle-track" for="tog-n-sups"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Resumen por Correo</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-n-digest" data-setting-key="notifications.emailDigest">
+              <label class="af-toggle-track" for="tog-n-digest"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Privacy -->
+        <div class="af-settings-section">
+          <div class="af-settings-section-title">Seguridad y Privacidad</div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Perfil Visible</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-p-visible" data-setting-key="privacy.profileVisible">
+              <label class="af-toggle-track" for="tog-p-visible"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Mostrar mi edad</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-p-age" data-setting-key="privacy.showAge">
+              <label class="af-toggle-track" for="tog-p-age"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Mostrar distancia</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-p-dist" data-setting-key="privacy.showDistance">
+              <label class="af-toggle-track" for="tog-p-dist"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+
+          <div class="af-settings-item">
+            <div class="af-settings-item-label">Confirmación de lectura</div>
+            <div class="af-toggle-wrap">
+              <input type="checkbox" class="af-toggle-input" id="tog-p-read" data-setting-key="privacy.readReceipts">
+              <label class="af-toggle-track" for="tog-p-read"></label>
+              <div class="af-toggle-thumb"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Account -->
+        <div class="af-settings-section">
+          <div class="af-settings-section-title">Cuenta</div>
+          
+          <div class="af-settings-item">
+            <span class="af-settings-item-label">Correo electrónico</span>
+            <span class="af-settings-item-value" id="account-email">-</span>
+          </div>
+
+          <div class="af-settings-item">
+            <span class="af-settings-item-label">Teléfono</span>
+            <span class="af-settings-item-value" id="account-phone">-</span>
+          </div>
+
+          <div class="af-settings-item">
+            <span class="af-settings-item-label">Redes vinculadas</span>
+            <span class="af-settings-item-value" id="account-social">-</span>
+          </div>
+        </div>
+
+        <!-- Log Out and Actions -->
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:20px">
+          <button class="af-btn af-btn-secondary af-btn-full" onclick="logout()">
+            <span>Cerrar Sesión</span>
+          </button>
+          <button class="af-btn af-btn-danger af-btn-full af-btn-sm" onclick="triggerDeleteAccount()">
+            <span>Eliminar Cuenta</span>
+          </button>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div id="bottom-nav-container"></div>
+  </div>
+
+  <!-- Delete Account Confirm Modal -->
+  <div class="af-modal-overlay" id="deleteAccountModal">
+    <div class="af-modal">
+      <div class="af-modal-handle" onclick="closeDeleteModal()"></div>
+      <h3 class="af-modal-title" style="color:var(--af-error)">¿Eliminar cuenta?</h3>
+      <div class="af-modal-body" style="text-align:center">
+        <p style="font-size:0.9rem; color:var(--af-gray-600); margin-bottom:24px; line-height:1.5">
+          Esta acción es permanente y eliminará de forma irreversible todos tus matches, conversaciones y fotos subidas.
+        </p>
+        <div style="display:flex; gap:12px">
+          <button type="button" class="af-btn af-btn-secondary af-btn-full" onclick="closeDeleteModal()">Cancelar</button>
+          <button type="button" class="af-btn af-btn-danger af-btn-full" onclick="deleteAccountPermanently()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Component scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check auth
+      if (localStorage.getItem('af_logged_in') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Render components
+      document.getElementById('sidebar-container').innerHTML = buildSidebar('settings');
+      document.getElementById('bottom-nav-container').innerHTML = buildBottomNav('settings');
+      Navigation.updateBadges();
+
+      // Load settings
+      loadSettingsData();
+    });
+
+    function loadSettingsData() {
+      const s = APP_SETTINGS;
+
+      // Sliders values
+      document.getElementById('setting-distance').value = s.discovery.maxDistance;
+      updateDistance(s.discovery.maxDistance);
+
+      document.getElementById('setting-age-min').value = s.discovery.ageMin;
+      updateAgeMin(s.discovery.ageMin);
+
+      document.getElementById('setting-age-max').value = s.discovery.ageMax;
+      updateAgeMax(s.discovery.ageMax);
+
+      // Radios
+      setShowMe(s.discovery.showMe, false);
+
+      // Toggles values
+      document.getElementById('tog-global').checked = s.discovery.globalMode;
+      document.getElementById('tog-show-exp').checked = s.discovery.showOnExplore;
+      
+      document.getElementById('tog-n-matches').checked = s.notifications.matches;
+      document.getElementById('tog-n-messages').checked = s.notifications.messages;
+      document.getElementById('tog-n-likes').checked = s.notifications.likes;
+      document.getElementById('tog-n-sups').checked = s.notifications.superLikes;
+      document.getElementById('tog-n-digest').checked = s.notifications.emailDigest;
+
+      document.getElementById('tog-p-visible').checked = s.privacy.profileVisible;
+      document.getElementById('tog-p-age').checked = s.privacy.showAge;
+      document.getElementById('tog-p-dist').checked = s.privacy.showDistance;
+      document.getElementById('tog-p-read').checked = s.privacy.readReceipts;
+
+      // Account info
+      document.getElementById('account-email').textContent = s.account.email;
+      document.getElementById('account-phone').textContent = s.account.phone;
+      document.getElementById('account-social').textContent = s.account.linkedSocial.join(', ');
+    }
+
+    // Sliders callbacks
+    function updateDistance(val) {
+      document.getElementById('distance-val').textContent = `${val} km`;
+      APP_SETTINGS.discovery.maxDistance = parseInt(val);
+    }
+
+    function updateAgeMin(val) {
+      const maxVal = parseInt(document.getElementById('setting-age-max').value);
+      if (parseInt(val) > maxVal) {
+        document.getElementById('setting-age-min').value = maxVal;
+        val = maxVal;
+      }
+      document.getElementById('age-min-val').textContent = `${val} años`;
+      APP_SETTINGS.discovery.ageMin = parseInt(val);
+    }
+
+    function updateAgeMax(val) {
+      const minVal = parseInt(document.getElementById('setting-age-min').value);
+      if (parseInt(val) < minVal) {
+        document.getElementById('setting-age-max').value = minVal;
+        val = minVal;
+      }
+      document.getElementById('age-max-val').textContent = `${val} años`;
+      APP_SETTINGS.discovery.ageMax = parseInt(val);
+    }
+
+    function setShowMe(val, triggerToast = true) {
+      document.querySelectorAll('.showme-option').forEach(el => el.classList.remove('active'));
+      
+      const optionEl = document.getElementById(`sm-${val}`);
+      if (optionEl) {
+        optionEl.classList.add('active');
+        APP_SETTINGS.discovery.showMe = val;
+        
+        if (triggerToast) {
+          Toast.show(`✓ Búsqueda configurada: ${optionEl.textContent}`, 'success', 2000);
+        }
+      }
+    }
+
+    function logout() {
+      Loader.show('Cerrando sesión...');
+      setTimeout(() => {
+        Loader.hide();
+        localStorage.removeItem('af_logged_in');
+        window.location.href = 'login.html';
+      }, 1000);
+    }
+
+    function triggerDeleteAccount() {
+      Modal.open('deleteAccountModal');
+    }
+
+    function closeDeleteModal() {
+      Modal.close('deleteAccountModal');
+    }
+
+    function deleteAccountPermanently() {
+      closeDeleteModal();
+      Loader.show('Eliminando todos tus datos...');
+      setTimeout(() => {
+        Loader.hide();
+        localStorage.clear();
+        window.location.href = 'register.html';
+      }, 1800);
+    }
+  </script>
+</body>
+</html>

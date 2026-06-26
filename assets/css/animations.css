@@ -1,0 +1,290 @@
+/* ============================================================
+   AlexitoFind — animations.css
+   Keyframes · Animation Classes · Microinteractions
+   ============================================================ */
+
+/* ============================================================
+   KEYFRAME DEFINITIONS
+   ============================================================ */
+
+/* Fade */
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* Slide */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-28px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+
+/* Scale */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+@keyframes scaleOut {
+  from { opacity: 1; transform: scale(1);    }
+  to   { opacity: 0; transform: scale(0.82); }
+}
+
+/* Splash Screen */
+@keyframes splashLogo {
+  0%   { opacity: 0; transform: scale(0.65) translateY(10px); }
+  55%  { opacity: 1; transform: scale(1.06) translateY(-2px); }
+  75%  { transform: scale(0.98) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes splashText {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes splashFadeOut {
+  0%   { opacity: 1; transform: scale(1);    }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+/* Swipe */
+@keyframes swipeLeft {
+  from { transform: translateX(0) rotate(0deg); opacity: 1; }
+  to   { transform: translateX(-140%) rotate(-22deg); opacity: 0; }
+}
+
+@keyframes swipeRight {
+  from { transform: translateX(0) rotate(0deg); opacity: 1; }
+  to   { transform: translateX(140%) rotate(22deg); opacity: 0; }
+}
+
+@keyframes swipeUp {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to   { transform: translateY(-140%) scale(0.78); opacity: 0; }
+}
+
+/* Card stack promote */
+@keyframes cardPromote2 {
+  from { transform: scale(0.96) translateY(12px); }
+  to   { transform: scale(1) translateY(0);        }
+}
+
+@keyframes cardPromote3 {
+  from { transform: scale(0.92) translateY(24px); }
+  to   { transform: scale(0.96) translateY(12px); }
+}
+
+/* Heartbeat */
+@keyframes heartbeat {
+  0%   { transform: scale(1);    }
+  14%  { transform: scale(1.32); }
+  28%  { transform: scale(1);    }
+  42%  { transform: scale(1.28); }
+  70%  { transform: scale(1);    }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% { opacity: 1;   }
+  50%       { opacity: 0.5; }
+}
+
+/* Shimmer (skeleton) */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Spin */
+@keyframes spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* Toast */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-20px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1);        }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0) scale(1);        }
+  to   { opacity: 0; transform: translateY(-10px) scale(0.94); }
+}
+
+/* Bounce In */
+@keyframes bounceIn {
+  0%   { transform: scale(0.25); opacity: 0; }
+  50%  { transform: scale(1.12); opacity: 1; }
+  70%  { transform: scale(0.94);             }
+  85%  { transform: scale(1.04);             }
+  100% { transform: scale(1);               }
+}
+
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Ring ripple */
+@keyframes ringRipple {
+  0%   { box-shadow: 0 0 0 0   rgba(253,38,122,0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(253,38,122,0);   }
+  100% { box-shadow: 0 0 0 0   rgba(253,38,122,0);    }
+}
+
+/* Sparkle */
+@keyframes sparkle {
+  0%   { transform: scale(0) rotate(0deg);   opacity: 0; }
+  50%  { transform: scale(1.3) rotate(200deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg);  opacity: 1; }
+}
+
+/* Gradient shift (background) */
+@keyframes gradientShift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+/* Draw check */
+@keyframes drawCheck {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0;   }
+}
+
+/* ============================================================
+   ANIMATION UTILITY CLASSES
+   ============================================================ */
+
+.af-animate-fade-in    { animation: fadeIn    var(--af-base) var(--af-ease-out) both; }
+.af-animate-fade-out   { animation: fadeOut   var(--af-base) var(--af-ease)     both; }
+.af-animate-slide-up   { animation: slideUp   var(--af-base) var(--af-ease-out) both; }
+.af-animate-slide-down { animation: slideDown var(--af-base) var(--af-ease-out) both; }
+.af-animate-slide-left { animation: slideLeft var(--af-base) var(--af-ease-out) both; }
+.af-animate-scale-in   { animation: scaleIn   var(--af-slow) var(--af-spring)   both; }
+.af-animate-bounce-in  { animation: bounceIn  0.5s           var(--af-spring)   both; }
+.af-animate-float      { animation: float     3s ease-in-out infinite;                }
+.af-animate-pulse      { animation: pulse     2s ease-in-out infinite;                }
+.af-animate-spin       { animation: spin      1s linear      infinite;                }
+.af-animate-heartbeat  { animation: heartbeat 1.2s ease-in-out;                       }
+.af-animate-sparkle    { animation: sparkle   0.5s var(--af-spring) both;             }
+.af-animate-ring       { animation: ringRipple 1.5s ease-out infinite;                }
+
+/* Stagger delays */
+.af-delay-100 { animation-delay: 100ms; }
+.af-delay-200 { animation-delay: 200ms; }
+.af-delay-300 { animation-delay: 300ms; }
+.af-delay-400 { animation-delay: 400ms; }
+.af-delay-500 { animation-delay: 500ms; }
+.af-delay-600 { animation-delay: 600ms; }
+.af-delay-700 { animation-delay: 700ms; }
+.af-delay-800 { animation-delay: 800ms; }
+
+/* ============================================================
+   SWIPE CARD ANIMATION CLASSES (applied by JS)
+   ============================================================ */
+
+.af-card.swipe-left  { animation: swipeLeft  0.48s var(--af-ease-in) both; }
+.af-card.swipe-right { animation: swipeRight 0.48s var(--af-ease-in) both; }
+.af-card.swipe-up    { animation: swipeUp    0.48s var(--af-ease-in) both; }
+
+/* ============================================================
+   HOVER MICROINTERACTIONS
+   ============================================================ */
+
+/* Lift on hover */
+.af-hover-lift {
+  transition: transform var(--af-base) var(--af-ease),
+              box-shadow var(--af-base) var(--af-ease);
+}
+
+.af-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--af-shadow-xl);
+}
+
+/* Scale on hover */
+.af-hover-scale {
+  transition: transform var(--af-fast) var(--af-spring);
+}
+
+.af-hover-scale:hover { transform: scale(1.05); }
+
+/* Glow on hover */
+.af-hover-glow {
+  transition: box-shadow var(--af-base) var(--af-ease);
+}
+
+.af-hover-glow:hover { box-shadow: var(--af-shadow-brand); }
+
+/* Brightness on hover */
+.af-hover-bright {
+  transition: filter var(--af-fast) var(--af-ease);
+}
+
+.af-hover-bright:hover { filter: brightness(1.06); }
+
+/* ============================================================
+   TRANSITION UTILITIES
+   ============================================================ */
+
+.af-transition-all    { transition: all    var(--af-base) var(--af-ease); }
+.af-transition-colors { transition: color  var(--af-fast) var(--af-ease), background-color var(--af-fast) var(--af-ease), border-color var(--af-fast) var(--af-ease); }
+.af-transition-opacity{ transition: opacity var(--af-base) var(--af-ease); }
+.af-transition-transform { transition: transform var(--af-base) var(--af-ease); }
+
+/* ============================================================
+   SPLASH SCREEN ANIMATION CLASSES
+   ============================================================ */
+
+.af-splash-logo { animation: splashLogo 0.9s var(--af-spring) both; }
+.af-splash-text { animation: splashText 0.6s var(--af-ease-out) 0.5s both; }
+.af-splash-sub  { animation: splashText 0.6s var(--af-ease-out) 0.7s both; }
+.af-splash-out  { animation: splashFadeOut 0.5s var(--af-ease) both; }
+
+/* ============================================================
+   PAGE TRANSITION
+   ============================================================ */
+
+.af-page-enter {
+  animation: slideUp var(--af-base) var(--af-ease-out) both;
+}
+
+/* ============================================================
+   FOCUS STYLES (Accessibility)
+   ============================================================ */
+
+:focus-visible {
+  outline: 3px solid var(--af-primary);
+  outline-offset: 2px;
+  border-radius: var(--af-r-sm);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

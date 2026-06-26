@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensajes — AlexitoFind</title>
+  <link rel="icon" type="image/jpg" href="assets/img/logo.jpg">
+  
+  <!-- CSS Base & Design System -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  
+  <style>
+    .messages-layout {
+      height: calc(100vh - var(--af-topbar) - var(--af-bottom-nav));
+      display: flex;
+      flex-direction: column;
+      background: white;
+      max-width: 600px;
+      margin: 0 auto;
+      border-left: 1px solid var(--af-gray-100);
+      border-right: 1px solid var(--af-gray-100);
+    }
+
+    @media (min-width: 1024px) {
+      .messages-layout {
+        height: 100vh;
+      }
+    }
+
+    /* List View Styling */
+    .messages-list-view {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .messages-list-header {
+      padding: var(--af-s5) var(--af-s5) var(--af-s3);
+    }
+
+    .messages-list-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .messages-search-wrap {
+      padding: 0 var(--af-s5) var(--af-s4);
+    }
+
+    .new-matches-bar {
+      padding: var(--af-s3) var(--af-s5);
+      border-bottom: 1px solid var(--af-gray-100);
+    }
+
+    .new-matches-title {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--af-gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--af-s3);
+    }
+
+    .chat-items-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    /* Chat View Styling */
+    .messages-chat-view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      background: var(--af-gray-50);
+    }
+
+    .chat-header {
+      height: 64px;
+      background: white;
+      border-bottom: 1px solid var(--af-gray-100);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--af-s4);
+      gap: var(--af-s3);
+      z-index: 10;
+    }
+
+    .chat-header-back {
+      color: var(--af-gray-600);
+      padding: 6px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--af-fast) var(--af-ease);
+    }
+
+    .chat-header-back:hover {
+      background: var(--af-gray-100);
+      color: var(--af-dark);
+    }
+
+    .chat-header-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--af-s3);
+    }
+
+    .chat-header-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--af-dark);
+      line-height: 1.2;
+    }
+
+    .chat-header-status {
+      font-size: 0.75rem;
+      color: var(--af-gray-400);
+    }
+
+    .chat-messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--af-s5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--af-s3);
+    }
+
+    /* Chat Input Bar */
+    .chat-input-bar {
+      background: white;
+      padding: var(--af-s3) var(--af-s4);
+      border-top: 1px solid var(--af-gray-100);
+      display: flex;
+      align-items: center;
+      gap: var(--af-s3);
+      padding-bottom: calc(var(--af-s3) + env(safe-area-inset-bottom, 0));
+    }
+
+    /* Chat bubbles modifications */
+    .af-chat-item {
+      display: flex;
+      align-items: center;
+      gap: var(--af-s4);
+      padding: 16px var(--af-s5);
+      border-bottom: 1px solid var(--af-gray-50);
+      cursor: pointer;
+      transition: background var(--af-fast) var(--af-ease);
+    }
+
+    .af-chat-item:hover {
+      background: var(--af-gray-50);
+    }
+
+    .af-chat-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .af-chat-name {
+      font-weight: 700;
+      font-size: 0.9375rem;
+      color: var(--af-dark);
+      margin-bottom: 2px;
+    }
+
+    .af-chat-preview {
+      font-size: 0.8125rem;
+      color: var(--af-gray-500);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .af-chat-preview.unread {
+      color: var(--af-dark);
+      font-weight: 700;
+    }
+
+    .af-chat-meta {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .af-chat-time {
+      font-size: 0.75rem;
+      color: var(--af-gray-400);
+      margin-bottom: 4px;
+    }
+
+    .af-chat-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--af-gradient);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .new-match-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+      box-shadow: var(--af-shadow-sm);
+    }
+
+    /* Message bubbles */
+    .af-message {
+      display: flex;
+      margin-bottom: 2px;
+      max-width: 75%;
+    }
+
+    .af-message.incoming {
+      align-self: flex-start;
+    }
+
+    .af-message.outgoing {
+      align-self: flex-end;
+    }
+
+    .af-message-bubble {
+      padding: 12px 16px;
+      border-radius: var(--af-r-lg);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .af-message.incoming .af-message-bubble {
+      background: white;
+      color: var(--af-dark);
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--af-shadow-xs);
+    }
+
+    .af-message.outgoing .af-message-bubble {
+      background: var(--af-gradient);
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 12px rgba(253,38,122,0.18);
+    }
+
+    .af-message-time {
+      font-size: 0.6875rem;
+      color: var(--af-gray-400);
+      margin-top: 4px;
+      padding: 0 4px;
+    }
+
+    .af-message.outgoing .af-message-time {
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="af-page">
+    <!-- Topbar for Mobile (Hidden inside individual chat) -->
+    <header class="af-topbar af-mobile-only" id="mobile-topbar" role="banner">
+      <div class="af-topbar-inner">
+        <div class="af-topbar-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--af-primary)">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <span class="af-topbar-logo-text">AlexitoFind</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content Area -->
+    <main class="af-page-content" role="main" style="padding:0">
+      <div class="messages-layout">
+        
+        <!-- List View -->
+        <div class="messages-list-view" id="af-messages-list-view">
+          <div class="messages-list-header">
+            <h1>Mensajes</h1>
+          </div>
+          
+          <div class="messages-search-wrap">
+            <div class="af-input-wrapper">
+              <span class="af-input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </span>
+              <input class="af-input has-icon-left" type="text" placeholder="Buscar match o mensaje..." id="chat-search">
+            </div>
+          </div>
+
+          <!-- Horizontal scroll of recent matches -->
+          <div class="new-matches-bar">
+            <div class="new-matches-title">Nuevos Matches</div>
+            <div class="af-scroll-x" id="messages-matches-scroll">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Chat List -->
+          <div class="chat-items-list" id="af-chat-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Chat View -->
+        <div class="messages-chat-view" id="af-messages-chat-view">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <button class="chat-header-back" onclick="goBack()" aria-label="Volver a la lista">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <div class="chat-header-info">
+              <div class="af-avatar af-avatar-sm">
+                <img class="af-avatar-img" src="" alt="" id="af-chat-header-avatar">
+              </div>
+              <div>
+                <h4 class="chat-header-title" id="af-chat-header-name">Cargando...</h4>
+                <div class="chat-header-status" id="af-chat-header-sub">En línea</div>
+              </div>
+            </div>
+            <!-- Extra settings icon -->
+            <button class="af-btn-icon" aria-label="Opciones del chat">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </button>
+          </div>
+
+          <!-- Chat Bubbles Area -->
+          <div class="chat-messages-container" id="af-messages-container">
+            <!-- Message bubbles populated by JS -->
+          </div>
+
+          <!-- Send Bar -->
+          <div class="chat-input-bar">
+            <input class="af-input" type="text" id="af-message-input" placeholder="Escribe un mensaje..." style="border-radius:var(--af-r-full)">
+            <button class="af-btn af-btn-icon af-btn-primary" id="af-send-btn" aria-label="Enviar mensaje">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div id="bottom-nav-container"></div>
+  </div>
+
+  <!-- Component scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/messages.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check auth
+      if (localStorage.getItem('af_logged_in') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Render navigations
+      document.getElementById('sidebar-container').innerHTML = buildSidebar('messages');
+      document.getElementById('bottom-nav-container').innerHTML = buildBottomNav('messages');
+
+      Navigation.updateBadges();
+
+      // Load conversation list
+      MessagesApp.initList();
+
+      // Populate new matches in horizontal bar
+      populateNewMatches();
+
+      // Check URL parameters to see if we should open a chat immediately
+      const params = new URLSearchParams(window.location.search);
+      const chatId = params.get('chat');
+      if (chatId) {
+        // Delay opening slightly to let the list populate or look natural
+        setTimeout(() => {
+          openChat(chatId);
+        }, 100);
+      }
+    });
+
+    function populateNewMatches() {
+      const scroll = document.getElementById('messages-matches-scroll');
+      const matches = getMatchedUsers().slice(0, 6); // Max 6 matches
+      
+      if (matches.length === 0) {
+        scroll.innerHTML = `
+          <div style="padding: 10px 0; font-size: 0.8rem; color: var(--af-gray-400)">
+            Sin matches recientes.
+          </div>
+        `;
+        return;
+      }
+
+      scroll.innerHTML = matches.map(m => {
+        const u = m.user;
+        const chat = getConversationByUserId(u.id);
+        const clickHandler = chat 
+          ? `openChat('${chat.id}')`
+          : `createNewConversation(${u.id})`;
+          
+        return `
+          <div class="af-match-card" onclick="${clickHandler}" style="padding: 4px">
+            <div class="af-match-avatar-wrap">
+              <img class="new-match-avatar" src="${u.avatar}" alt="${u.name}"
+                onerror="this.src='${generateAvatarSVG(u.name + ' ' + u.lastName, 52)}'">
+              ${m.isNew ? '<div class="af-match-avatar-ring"></div>' : ''}
+            </div>
+            <span class="match-name" style="font-size:0.75rem;font-weight:600;margin-top:4px">${u.name}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Wrap around MessagesApp to handle mobile topbar visibility
+    function openChat(convId) {
+      document.getElementById('mobile-topbar').style.display = 'none';
+      MessagesApp.openConversation(convId);
+    }
+
+    function goBack() {
+      document.getElementById('mobile-topbar').style.display = 'flex';
+      MessagesApp.backToList();
+      populateNewMatches();
+    }
+
+    function createNewConversation(userId) {
+      // Find if we already have a conversation with this user
+      const existing = getConversationByUserId(userId);
+      if (existing) {
+        openChat(existing.id);
+        return;
+      }
+
+      // Create new simulated conversation
+      const user = getUserById(userId);
+      const newConvId = 'c' + Date.now();
+      const newConv = {
+        id: newConvId,
+        userId: userId,
+        messages: [
+          { id: 'm1', from: userId, text: `¡Hola Alexito! Vi tu perfil y me gustó mucho 😊`, time: 'Ahora', read: false }
+        ],
+        lastMessage: `¡Hola Alexito! Vi tu perfil y me gustó mucho 😊`,
+        lastTime: 'Ahora',
+        unread: 1
+      };
+      
+      CONVERSATIONS.unshift(newConv);
+      openChat(newConvId);
+    }
+  </script>
+</body>
+</html>

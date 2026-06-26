@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio — AlexitoFind</title>
+  <link rel="icon" type="image/jpg" href="assets/img/logo.jpg">
+  
+  <!-- CSS Base & Design System -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  
+  <style>
+    .welcome-section {
+      padding: var(--af-s6) 0 var(--af-s4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-text h1 {
+      font-size: 1.625rem;
+      font-weight: 800;
+      color: var(--af-dark);
+      letter-spacing: -0.03em;
+    }
+
+    .welcome-text p {
+      font-size: 0.9rem;
+      color: var(--af-gray-500);
+      margin-top: 2px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--af-s5);
+      margin-bottom: var(--af-s8);
+    }
+
+    @media (min-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--af-s4);
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--af-r-xl);
+      padding: var(--af-s5);
+      box-shadow: var(--af-shadow-sm);
+      border: 1px solid var(--af-gray-100);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: transparent;
+      transition: background var(--af-fast) var(--af-ease);
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--af-shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .stat-card:hover::before {
+      background: var(--af-primary);
+    }
+
+    .stat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--af-s3);
+    }
+
+    .stat-card-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--af-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-card-icon {
+      font-size: 1.25rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--af-gray-50);
+    }
+
+    .stat-card-val {
+      font-family: var(--af-font-display);
+      font-size: 1.875rem;
+      font-weight: 800;
+      color: var(--af-dark);
+      line-height: 1;
+    }
+
+    .stat-card-trend {
+      font-size: 0.75rem;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+
+    .trend-up { color: var(--af-success); }
+
+    /* Matches Section */
+    .matches-section {
+      margin-bottom: var(--af-s6);
+    }
+
+    .match-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--af-s2);
+      flex-shrink: 0;
+      width: 76px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .match-avatar-container {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      transition: transform var(--af-fast) var(--af-spring);
+    }
+
+    .match-avatar-container::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: var(--af-gradient);
+      z-index: -1;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all var(--af-base) var(--af-spring);
+    }
+
+    .match-item:hover .match-avatar-container {
+      transform: scale(1.08);
+    }
+
+    .match-item:hover .match-avatar-container::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .match-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: var(--af-shadow-sm);
+    }
+
+    .match-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--af-gray-800);
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .match-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      background: var(--af-primary);
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    /* Premium Banner */
+    .premium-banner {
+      background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+      color: white;
+      border-radius: var(--af-r-2xl);
+      padding: var(--af-s6);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--af-shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--af-s4);
+    }
+
+    .premium-banner::before {
+      content: '★';
+      position: absolute;
+      right: -20px;
+      bottom: -30px;
+      font-size: 10rem;
+      color: rgba(255, 255, 255, 0.03);
+      transform: rotate(15deg);
+      pointer-events: none;
+    }
+
+    .premium-tag {
+      background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+      color: white;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--af-r-full);
+      align-self: flex-start;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .premium-title {
+      font-family: var(--af-font-display);
+      font-size: 1.375rem;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .premium-desc {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.4;
+    }
+
+    /* Activity Feed */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--af-s3);
+    }
+
+    .activity-card {
+      background: white;
+      border-radius: var(--af-r-xl);
+      padding: var(--af-s4);
+      border: 1px solid var(--af-gray-100);
+      box-shadow: var(--af-shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--af-s4);
+      transition: all var(--af-base) var(--af-ease);
+    }
+
+    .activity-card:hover {
+      box-shadow: var(--af-shadow-md);
+      transform: translateX(3px);
+    }
+
+    .activity-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.125rem;
+    }
+
+    .activity-info {
+      flex: 1;
+      font-size: 0.875rem;
+      color: var(--af-gray-700);
+    }
+
+    .activity-info strong {
+      color: var(--af-dark);
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--af-gray-400);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="af-page">
+    <!-- Topbar for Mobile -->
+    <header class="af-topbar af-mobile-only" role="banner">
+      <div class="af-topbar-inner">
+        <div class="af-topbar-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--af-primary)">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <span class="af-topbar-logo-text">AlexitoFind</span>
+        </div>
+        <div style="margin-left: auto;">
+          <a href="profile.html" class="af-avatar af-avatar-sm">
+            <img class="af-avatar-img" src="assets/img/avatar-0.jpg" alt="Mi perfil" id="mobile-top-avatar">
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar injected here -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content Area -->
+    <main class="af-page-content" role="main">
+      <div class="af-container">
+        
+        <!-- Welcome Header -->
+        <section class="welcome-section">
+          <div class="welcome-text">
+            <h1 id="welcome-title">¡Hola, Alexito! 👋</h1>
+            <p>Descubre nuevas personas interesantes hoy.</p>
+          </div>
+          <div>
+            <a href="explore.html" class="af-btn af-btn-primary">
+              <span>Descubrir</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Recent Matches -->
+        <section class="matches-section">
+          <div class="af-section-header">
+            <h3 class="af-section-title">Matches Recientes</h3>
+            <span class="af-section-link" onclick="window.location.href='messages.html'">Ver todos</span>
+          </div>
+          <div class="af-scroll-x" id="dashboard-matches-scroll">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+        <!-- Main Grid Layout -->
+        <div class="dashboard-grid">
+          
+          <!-- Column Left: Statistics -->
+          <div>
+            <div class="af-section-header">
+              <h3 class="af-section-title font-bold">Estadísticas de Perfil</h3>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-card" onclick="window.location.href='notifications.html'">
+                <div class="stat-card-header">
+                  <span class="stat-card-title">Likes recibidos</span>
+                  <div class="stat-card-icon" style="color:var(--af-secondary)">❤️</div>
+                </div>
+                <div class="stat-card-val" id="stat-likes">128</div>
+                <div class="stat-card-trend trend-up">
+                  <span>▲ 12% esta semana</span>
+                </div>
+              </div>
+
+              <div class="stat-card" onclick="window.location.href='messages.html'">
+                <div class="stat-card-header">
+                  <span class="stat-card-title">Matches</span>
+                  <div class="stat-card-icon" style="color:var(--af-primary)">💘</div>
+                </div>
+                <div class="stat-card-val" id="stat-matches">42</div>
+                <div class="stat-card-trend trend-up">
+                  <span>▲ 4 nuevos hoy</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-card-header">
+                  <span class="stat-card-title">Super Likes</span>
+                  <div class="stat-card-icon" style="color:var(--af-warning)">⭐</div>
+                </div>
+                <div class="stat-card-val" id="stat-superlikes">8</div>
+                <div class="stat-card-trend" style="color:var(--af-gray-400)">
+                  <span>Estable</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-card-header">
+                  <span class="stat-card-title">Visitas de perfil</span>
+                  <div class="stat-card-icon" style="color:var(--af-purple)">👁️</div>
+                </div>
+                <div class="stat-card-val" id="stat-views">370</div>
+                <div class="stat-card-trend trend-up">
+                  <span>▲ 28% esta semana</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column Right: Premium & Actions -->
+          <div style="display:flex;flex-direction:column;gap:var(--af-s5)">
+            <div class="af-section-header">
+              <h3 class="af-section-title">Destacados</h3>
+            </div>
+
+            <div class="premium-banner">
+              <span class="premium-tag">Premium</span>
+              <h4 class="premium-title">Consigue AlexitoFind Plus</h4>
+              <p class="premium-desc">Likes ilimitados, modo global, boost mensual gratuito y descubre quién te dio like antes de deslizar.</p>
+              <button class="af-btn af-btn-white af-btn-sm" style="margin-top:4px" onclick="upgradeToPremium()">
+                <span>Mejorar ahora</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <section style="margin-bottom:var(--af-s16)">
+          <div class="af-section-header">
+            <h3 class="af-section-title">Actividad Reciente</h3>
+            <span class="af-section-link" onclick="markAllNotificationsRead(); window.location.href='notifications.html'">Marcar leído</span>
+          </div>
+          <div class="activity-list" id="activity-feed">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Bottom Navigation for Mobile -->
+    <div id="bottom-nav-container"></div>
+  </div>
+
+  <!-- Component scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/components.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check auth state
+      if (localStorage.getItem('af_logged_in') !== 'true') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Render navigation components
+      document.getElementById('sidebar-container').innerHTML = buildSidebar('dashboard');
+      document.getElementById('bottom-nav-container').innerHTML = buildBottomNav('dashboard');
+      
+      // Update global badges
+      Navigation.updateBadges();
+
+      // Set user avatars
+      const user = CURRENT_USER;
+      document.getElementById('welcome-title').textContent = `¡Hola, ${user.name}! 👋`;
+      const mobAvatar = document.getElementById('mobile-top-avatar');
+      if (mobAvatar) {
+        mobAvatar.src = user.avatar;
+        mobAvatar.onerror = () => { mobAvatar.src = generateAvatarSVG(user.name, 36); };
+      }
+
+      // Render stats from user info
+      document.getElementById('stat-likes').textContent = user.stats.likes;
+      document.getElementById('stat-matches').textContent = user.stats.matches;
+      document.getElementById('stat-superlikes').textContent = user.stats.superLikes;
+      document.getElementById('stat-views').textContent = user.stats.views;
+
+      // Populate recent matches scroll
+      const matchesContainer = document.getElementById('dashboard-matches-scroll');
+      const matches = getMatchedUsers().slice(0, 8); // Top 8 matches
+      
+      if (matches.length === 0) {
+        matchesContainer.innerHTML = `
+          <div style="padding:16px 0;color:var(--af-gray-400);font-size:0.875rem">
+            No tienes matches recientes. ¡Empieza a deslizar!
+          </div>
+        `;
+      } else {
+        matchesContainer.innerHTML = matches.map(m => {
+          const u = m.user;
+          const isNewBadge = m.isNew ? '<span class="match-badge"></span>' : '';
+          // We redirect to messages view when clicked
+          const chat = getConversationByUserId(u.id);
+          const clickHandler = chat 
+            ? `window.location.href='messages.html?chat=${chat.id}'`
+            : `window.location.href='messages.html'`;
+            
+          return `
+            <div class="match-item" onclick="${clickHandler}">
+              <div class="match-avatar-container">
+                <img class="match-img" src="${u.avatar}" alt="${u.name}"
+                  onerror="this.src='${generateAvatarSVG(u.name + ' ' + u.lastName, 64)}'">
+                ${isNewBadge}
+              </div>
+              <span class="match-name">${u.name}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Populate Activity Feed from notifications
+      const activityFeed = document.getElementById('activity-feed');
+      const activities = NOTIFICATIONS.slice(0, 4); // Show top 4 notifications
+
+      if (activities.length === 0) {
+        activityFeed.innerHTML = `
+          <div class="af-empty" style="padding: 24px">
+            <p style="color:var(--af-gray-400)">Sin actividad reciente.</p>
+          </div>
+        `;
+      } else {
+        activityFeed.innerHTML = activities.map(act => {
+          return `
+            <div class="activity-card" id="act-${act.id}">
+              <div class="activity-icon-wrap" style="background:${act.iconBg}">
+                ${act.icon}
+              </div>
+              <div class="activity-info">
+                <div>${act.text}</div>
+                <div class="activity-time">${act.time}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    });
+
+    function upgradeToPremium() {
+      Loader.show('Procesando pago simulado...');
+      setTimeout(() => {
+        Loader.hide();
+        CURRENT_USER.premium = true;
+        localStorage.setItem('af_premium_user', 'true');
+        Toast.success('👑 ¡Felicidades! Ahora eres Premium');
+        
+        // Re-render components to reflect premium status if relevant
+        setTimeout(() => { location.reload(); }, 1200);
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
